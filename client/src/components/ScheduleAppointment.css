@@ -1,0 +1,78 @@
+body {
+    background: linear-gradient(to right, #e0f7fa, #ffffff);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    max-height: 100%;
+    height: auto;
+  }
+  
+  .schedule-container {
+    max-width: 600px;
+    margin: 60px auto;
+    background-color: #ffffff;
+    padding: 40px 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  .schedule-container h2 {
+    text-align: center;
+    color: #004d99;
+    margin-bottom: 30px;
+    font-size: 24px;
+  }
+  
+  .schedule-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .schedule-form input,
+  .schedule-form select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 16px;
+    margin-bottom: 20px;
+    transition: border-color 0.3s;
+  }
+  
+  .schedule-form input:focus,
+  .schedule-form select:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  .schedule-form button {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .schedule-form button:hover {
+    background-color: #0056b3;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  

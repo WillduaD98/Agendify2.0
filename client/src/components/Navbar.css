@@ -1,0 +1,85 @@
+.navbar {
+  background-color: #1f3a93; /* azul fuerte */
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+  position: relative;
+}
+
+.navbar-links.active {
+  padding-right: 20px;
+}
+
+.navbar-title {
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  padding-left: 20px;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.navbar-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+  transition: color 0.3s ease;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-size: 18px;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+/* Hover effect */
+.navbar-links a:hover,
+.link-button:hover {
+  color: #b0c4de;
+}
+
+/* BOTÓN HAMBURGUESA */
+.navbar-toggle {
+  display: none;
+  font-size: 28px;
+  color: white;
+  cursor: pointer;
+}
+
+/* 🔥 RESPONSIVE */
+@media (max-width: 768px) {
+  .navbar-links {
+    display: none;
+    position: absolute;
+    top: 60px;
+    right: 0;
+    background-color: #1f3a93;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    padding: 1rem 2rem;
+    gap: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .navbar-links.active {
+    display: flex;
+  }
+
+  .navbar-toggle {
+    display: block;
+  }
+}

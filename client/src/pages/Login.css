@@ -1,0 +1,190 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .login-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+  }
+  
+  .login-left {
+    flex: 1;
+    background: url('/assets/office.jpg') no-repeat center center/cover;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 100px;
+    color: white;
+  }
+  
+  .contact-info {
+    font-size: 14px;
+    line-height: 1.6;
+    color: white;
+  }
+  
+  .contact-info p {
+    margin: 0 0 10px 0;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .contact-info strong {
+    font-weight: 600;
+    color: white;
+  }
+  
+  .login-right {
+    flex: 1;
+    background: linear-gradient(to bottom right, #04264b, #0a3d6c);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top-left-radius: 32px;
+    border-bottom-left-radius: 32px;
+  }
+  
+  .login-box {
+    width: 100%;
+    max-width: 350px;
+    background-color: #6ee2f5;
+    border-radius: 20px;
+    padding: 30px 30px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    color: #022a5c;
+  }
+  
+  .login-box h2 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .login-form label {
+    text-align: left;
+    font-weight: 500;
+    margin-top: 8px;
+    font-size: 14px;
+    color: #022a5c;
+  }
+  
+  .login-form input {
+    padding: 10px 15px;
+    border-radius: 20px;
+    border: none;
+    font-size: 14px;
+  }
+  .login-nav {
+    position: absolute;
+    top: 30px;
+    left: 40px;
+    display: flex;
+    gap: 30px;
+    color: white; 
+    font-weight: 600;
+    font-size: 16px;
+    z-index: 10;
+  }  
+  
+  .login-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+  }
+  
+  .login-footer p {
+    font-size: 12px;
+    color: #022a5c;
+  }
+  
+  .login-footer a {
+    color: #022a5c;
+    text-decoration: underline;
+  }
+  
+  .login-footer button {
+    padding: 8px 20px;
+    border-radius: 20px;
+    border: none;
+    background-color: #022a5c;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  /* Responsividad para pantallas medianas */
+@media (max-width: 768px) {
+  .login-container {
+    flex-direction: column;
+  }
+
+  .login-left, .login-right {
+    flex: none;
+    width: 100%;
+    height: 50vh;
+    border-radius: 0; /* Quitamos bordes redondeados */
+  }
+
+  .login-left {
+    padding: 40px 20px;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .contact-info {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .login-nav {
+    position: static;
+    justify-content: center;
+    padding: 10px 0;
+    gap: 20px;
+  }
+}
+
+/* Responsividad para pantallas muy pequeñas */
+@media (max-width: 480px) {
+  .login-left, .login-right {
+    height: auto;
+    padding: 30px 15px;
+  }
+
+  .login-box {
+    max-width: 300px;
+    padding: 20px;
+  }
+
+  .login-form input {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+
+  .login-footer {
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .login-footer p, .login-footer a {
+    font-size: 11px;
+  }
+
+  .login-footer button {
+    width: 100%;
+  }
+}
