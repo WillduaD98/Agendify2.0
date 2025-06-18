@@ -1,11 +1,11 @@
-import dotenv from 'dotenv';
-dotenv.config();
-// import { Sequelize } from 'sequelize';
-import { UserFactory } from './user.model.js';
-import { ClientFactory } from './client.model.js';
-import { AppointmentFactory } from './appointment.model.js';
-import sequelize from '../config/db.js';
 
+
+// import { Sequelize } from 'sequelize';
+import  User  from './user.model.js';
+import Client  from './client.model.js';
+import Appointment  from './appointment.model.js';
+
+export { User, Client, Appointment };
 
 // const sequelize = process.env.DATABASE_URL
 //   ? new Sequelize(process.env.DATABASE_URL)
@@ -18,15 +18,14 @@ import sequelize from '../config/db.js';
 //     },
 //   });
 
-const User = UserFactory(sequelize);
-const Client = ClientFactory(sequelize);
-const Appointment = AppointmentFactory(sequelize)
+// const User = UserFactory(sequelize);
+// const Client = ClientFactory(sequelize);
+// const Appointment = AppointmentFactory(sequelize)
 
 
-User.hasMany(Client, {foreignKey: 'assignedUserId'});
-Client.belongsTo(User, { foreignKey: 'assignedUserId', as: 'assignedUser' });
+// User.hasMany(Client, {foreignKey: 'assignedUserId'});
+// Client.belongsTo(User, { foreignKey: 'assignedUserId', as: 'assignedUser' });
 
-Client.hasMany(Appointment, {foreignKey: 'clientId'});
-Appointment.belongsTo(Client, {foreignKey: 'clientId', as : 'client'})
+// Client.hasMany(Appointment, {foreignKey: 'clientId'});
+// Appointment.belongsTo(Client, {foreignKey: 'clientId', as : 'client'})
 
-export { User, Client, Appointment };
