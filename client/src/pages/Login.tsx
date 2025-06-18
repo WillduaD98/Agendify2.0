@@ -35,19 +35,24 @@ const Login = () => {
   return (
     <div className="login-container">
       <div className="login-left">
-        <div className="contact-info">
-          <p>📞 <strong>+123-456-7890</strong></p>
-          <p>✉️ <strong>hello@agendigy.com</strong></p>
-          <p>🌐 <strong>www.agendigy.com</strong></p>
-          <p>🏠 <strong>123 Anywhere St., Any City</strong></p>
-        </div>
-      </div>
+  <div className="login-branding">
+    <h1 className="brand-title">
+      AGENDIFY<span>Plus</span>
+    </h1>
+  </div>
+
+  <div className="contact-info">
+    <p>✉️ <strong>hello@agendigy.com</strong></p>
+    <p>🌐 <strong>www.agendigy.com</strong></p>
+    <p>🏠 <strong>123 Anywhere St., Any City</strong></p>
+  </div>
+</div>
       <div className="login-right">
         <div className="login-box">
           <div className="login-logo">
             <img src="assets/logoagendify.png" alt="Agendify Logo" />
   
-            <h1>Agendify</h1>
+            <h1>Agendify<span>+</span></h1>
           </div>
           <h2>LOGIN TO YOUR ACCOUNT</h2>
           <form className="login-form" onSubmit={handleSubmit}>
