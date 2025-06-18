@@ -38,8 +38,8 @@ const Navbar: React.FC = () => {
         {location.pathname !== '/dashboard' && (
           <Link to="/dashboard">Home</Link>
         )}
-        <Link to="/schedule">Schedule</Link>
-        <Link to="/booking">Book</Link>
+        <Link to="/schedule">New Appointment</Link>
+        <Link to="/booking">View Appointments</Link>
         <button
           type="button"
           className="link-button"

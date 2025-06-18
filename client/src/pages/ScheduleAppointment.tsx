@@ -49,7 +49,7 @@ const ViewCreateAppointments = () => {
         setSelectedDate={setSelectedDate}
         onSuccess={fetchAppointments}
       />
-      <AppointmentList appointments={appointments} />
+      {/* <AppointmentList appointments={appointments} /> */}
     </div>
   );
 };
