@@ -6,8 +6,8 @@ interface ClientFormProps {
 }
 
 const ADD_CLIENT = gql`
-  mutation AddClient($name: String!, $phoneNumber: String!) {
-    addClient(name: $name, phoneNumber: $phoneNumber) {
+  mutation AddClient($input: ClientInput!) {
+    addClient(input: $input) {
       _id
       name
       phoneNumber
@@ -29,8 +29,10 @@ const ClientForm: React.FC<ClientFormProps> = ({ onSuccess }) => {
     try {
       await addClient({
         variables: {
-          name,
-          phoneNumber,
+          input: {
+            name,
+            phoneNumber,
+          },
         },
       });
 
@@ -40,7 +42,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ onSuccess }) => {
       setPhoneNumber('');
       await onSuccess();
     } catch (error: any) {
-      console.error('Error al crear cliente:', error.message);
+      console.error('Error creating client:', error.message);
       setErrorMessage('There was an error creating the client');
       setSuccessMessage('');
     }
@@ -51,7 +53,6 @@ const ClientForm: React.FC<ClientFormProps> = ({ onSuccess }) => {
       <div className="card p-4 shadow rounded-4" style={{ maxWidth: '500px', width: '100%' }}>
         <h2 className="mb-3 text-center fw-bold text-primary">Create a new client</h2>
         <form onSubmit={handleSubmit}>
-          {/* Name input */}
           <div className="mb-3">
             <label className="form-label fw-semibold">Client Name:</label>
             <input
@@ -64,7 +65,6 @@ const ClientForm: React.FC<ClientFormProps> = ({ onSuccess }) => {
             />
           </div>
 
-          {/* Phone Number input */}
           <div className="mb-3">
             <label className="form-label fw-semibold">Client Phone Number:</label>
             <input

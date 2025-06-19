@@ -18,18 +18,8 @@ const GET_CLIENTS = gql`
 `;
 
 const ADD_APPOINTMENT = gql`
-  mutation AddAppointment(
-    $date: String!
-    $reason: String!
-    $status: String!
-    $clientId: ID!
-  ) {
-    addAppointment(
-      date: $date
-      reason: $reason
-      status: $status
-      clientId: $clientId
-    ) {
+  mutation AddAppointment($input: CreateAppointmentInput!) {
+    addAppointment(input: $input) {
       _id
     }
   }
@@ -51,10 +41,12 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ onSuccess, setSelecte
     try {
       await addAppointment({
         variables: {
-          date: selectedDate,
-          reason,
-          status,
-          clientId,
+          input: {
+            date: selectedDate,
+            reason,
+            status,
+            clientId,
+          },
         },
       });
 
@@ -97,6 +89,8 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ onSuccess, setSelecte
             <option value="">Seleccione</option>
             {loadingClients ? (
               <option disabled>Loading...</option>
+            ) : errorClients ? (
+              <option disabled>Error loading clients</option>
             ) : (
               data?.clients.map((c: any) => (
                 <option key={c._id} value={c._id}>
