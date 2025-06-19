@@ -1,16 +1,18 @@
 // IMPORTS
-import Appointment, { AppointmentAttributes } from '../models/appointment.model.js';
-import Client, { ClientAttributes } from '../models/client.model.js';
+import Appointment from '../models/appointment.model.js';
+import Client from '../models/client.model.js';
 import User, { UserAttributes } from '../models/user.model.js';
 import { signToken, AuthenticationError } from '../services/auth.js';
 
-// TYPES
+// (Resto del código sigue igual sin cambios)
 export interface AddUser {
   input: {
     username: string;
     password: string;
   };
 }
+// ... (el resto de tus interfaces y resolvers va igual que antes con el try/catch)
+
 export interface GetUserArgs {
   userId?: string;
   username?: string;

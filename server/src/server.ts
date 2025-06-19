@@ -9,6 +9,7 @@ import { expressMiddleware } from '@apollo/server/express4';
 import { typeDefs, resolvers } from './schemas/index.js';
 import { authenticateToken } from './services/auth.js';
 import db from './config/db.js';
+import type { GraphQLFormattedError } from 'graphql';
 
 dotenv.config();
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
@@ -17,11 +18,11 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   introspection: true,
-  formatError: (formattedError) => {
+  formatError: (formattedError: GraphQLFormattedError) => {
     return {
       message: formattedError.message,
-      path: formattedError.path,
-      code: formattedError.extensions?.code || 'INTERNAL_SERVER_ERROR'
+      path: formattedError.path || [],
+      code: (formattedError.extensions as any)?.code || 'INTERNAL_SERVER_ERROR'
     };
   }
 });
