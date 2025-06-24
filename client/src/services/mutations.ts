@@ -1,10 +1,9 @@
 // utils/mutations.ts
-
 import { gql } from '@apollo/client';
 
 export const LOGIN_USER = gql`
-  mutation login($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
+  mutation login($username: String!, $password: String!) {
+    login(username: $username, password: $password) {
       token
       user {
         _id
@@ -15,8 +14,8 @@ export const LOGIN_USER = gql`
 `;
 
 export const ADD_USER = gql`
-  mutation addUser($username: String!, $email: String!, $password: String!) {
-    addUser(username: $username, email: $email, password: $password) {
+  mutation addUser($input:CreateUserInput!) {
+    addUser(input:$input) {
       token
       user {
         _id
@@ -61,7 +60,7 @@ export const REMOVE_BOOK = gql`
     }
   }
 `;
-import { gql } from '@apollo/client';
+
 
 export const CREATE_APPOINTMENT = gql`
   mutation CreateAppointment($input: AppointmentInput!) {

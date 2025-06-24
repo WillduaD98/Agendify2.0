@@ -42,16 +42,18 @@ userSchema.virtual('clients', {
   justOne: false
 })
 userSchema.pre('save', async function (next) {
+  // 🔐 Solo hash si la contraseña fue modificada
   if (!this.isModified('password')) return next();
 
   const saltRounds = 10;
   this.password = await bcrypt.hash(this.password, saltRounds);
   next();
 });
-//custom method to compare and validatre password for loggin in:
+
+// Método personalizado para validar contraseñas con bcrypt
 userSchema.methods.isCorrectPassword = async function (password: string): Promise<boolean> {
-  return await bcrypt.compare(password, this.password)
-}
+  return await bcrypt.compare(password, this.password);
+};
 
 const User = model<UserAttributes>('User', userSchema)
 
