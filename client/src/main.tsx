@@ -10,7 +10,8 @@ import { setContext } from '@apollo/client/link/context'; // Apollo Client
 import { AuthProvider } from './context/AuthContext'; // 👈 Importa el proveedor
 
 // Apollo setup con httpLink y authLink
-const httpLink = createHttpLink({ uri: '/graphql' });
+// const httpLink = createHttpLink({ uri: '/graphql' });
+const httpLink = createHttpLink({ uri: 'http://localhost:3001/graphql' }); // para asegurar de que las peticiones vayan directo al servidor GraphQL en el puerto correcto.
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem('token');
   return {

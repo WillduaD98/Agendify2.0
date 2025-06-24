@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
+import cors from 'cors'; // Importar cors
 import { fileURLToPath } from 'url';
 import { Request, Response } from 'express';
 
@@ -37,10 +38,21 @@ const startApolloServer = async () => {
   const app = express();
   const PORT = process.env.PORT || 3001;
 
-  app.use(express.json());
+  //  Habilitamos CORS para permitir solicitudes desde el frontend (localhost:3000)
+  app.use(cors({
+    origin: 'http://localhost:3000', // Frontend URL
+    credentials: true // Permitir cookies/autenticación si lo usás después
+  }));
 
+  app.use(express.json());
+  app.use((req, _res, next) => {
+    console.log(`[${req.method}] ${req.path}`);
+    next();
+  });
+//Usamos el middleware de Apollo con autenticación
   app.use('/graphql', expressMiddleware(server, { context: authenticateToken }));
 
+  // Configuración para servir archivos en producción
   if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, '../../client/dist')));
     app.get('*', (_req: Request, res: Response) => {

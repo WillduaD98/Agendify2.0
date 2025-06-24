@@ -152,10 +152,30 @@ export const resolvers = {
       }
     },
     login: async (_: any, { username, password }: { username: string; password: string }) => {
-      const user = await User.findOne({ username });
-      if (!user || !(await user.isCorrectPassword(password))) throw AuthenticationError;
-      const token = signToken(user.username, user._id);
-      return { token, user };
+      console.log('🔍 Login resolver called'); // <- Asegúrate de que esto se imprima en la terminal
+      try {
+        console.log('🧪 Login attempt for:', username); // <- Esto debería verse en terminal
+    
+        const user = await User.findOne({ username });
+    
+        if (!user) {
+          throw new AuthenticationError('No user found with that username');
+        }
+    
+        const correctPw = await user.isCorrectPassword(password);
+    
+        if (!correctPw) {
+          throw new AuthenticationError('Incorrect credentials');
+        }
+    
+        const token = signToken(user.username, user._id);
+    console.log ('✅ Login successful, token generated:', token); 
+
+        return { token, user };
+      } catch (error) {
+        console.error('❌ Error in login resolver:', error); // <- Asegúrate de tener esto
+        throw error;
+      }
     },
     addClient: async (_: any, { input }: { input: AddClient['input'] }, context: Context) => {
       try {
