@@ -1,8 +1,10 @@
+// client/src/components/ClientForm.tsx
+
 import React, { useState } from 'react';
 import { useMutation, gql } from '@apollo/client';
 
 interface ClientFormProps {
-  onSuccess: () => Promise<void>;
+  onSuccess?: () => void; // ✅ Ya no es obligatorio ni async
 }
 
 const ADD_CLIENT = gql`
@@ -40,12 +42,24 @@ const ClientForm: React.FC<ClientFormProps> = ({ onSuccess }) => {
       setErrorMessage('');
       setName('');
       setPhoneNumber('');
-      await onSuccess();
-    } catch (error: any) {
-      console.error('Error creating client:', error.message);
-      setErrorMessage('There was an error creating the client');
-      setSuccessMessage('');
-    }
+
+      // ✅ Llama onSuccess si existe
+      if (onSuccess) onSuccess();
+} catch (error: any) {
+  if (error.graphQLErrors && error.graphQLErrors.length > 0) {
+    console.error('GraphQL Error Message:', error.graphQLErrors[0].message);
+    console.error('GraphQL Error Details:', error.graphQLErrors[0]);
+  }
+  if (error.networkError) {
+    console.error('Network Error:', error.networkError);
+  }
+  console.error('Apollo Error:', error.message);
+  setErrorMessage(`There was an error: ${error.message}`);
+  setSuccessMessage('');
+}
+
+
+
   };
 
   return (

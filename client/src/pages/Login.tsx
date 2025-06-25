@@ -1,26 +1,22 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
 import './Login.css';
-import { useMutation } from '@apollo/client'; // Hook de Apollo Client para ejecutar mutations
-import { LOGIN_USER } from '../services/mutations'; // Mutation GraphQL para login
-import AuthService from '../services/auth'; // Servicio para guardar token y redireccionar
+import { useMutation } from '@apollo/client';
+import { LOGIN_USER } from '../services/mutations';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [userFormData, setUserFormData] = useState({
-    username: '', // input que representa email
+    username: '',
     password: '',
   });
-  // const [username, setUsername] = useState(''); // input que representa email
-  // const [password, setPassword] = useState('');
 
   const [error, setError] = useState('');
-  const navigate = useNavigate(); // ✅ Hook de navegación para redirigir a otra ruta
+  const navigate = useNavigate();
 
-  // Ejecutamos el mutation LOGIN_USER
-  const [loginUser, {error: loginError}] = useMutation(LOGIN_USER);
+  const [loginUser, { error: loginError }] = useMutation(LOGIN_USER);
 
   if (loginError) {
-    console.log(JSON.stringify(loginError)); 
+    console.log(JSON.stringify(loginError));
   }
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -28,39 +24,36 @@ const Login = () => {
     setUserFormData({ ...userFormData, [name]: value });
   };
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   setError('');
-
   const handleFormSubmit = async (event: FormEvent) => {
-    event.preventDefault(); // Prevenir el comportamiento por defecto del formulario 
+    event.preventDefault();
 
     const form = event.target as HTMLFormElement;
     if (!form.checkValidity()) {
-      event.stopPropagation(); // Detener si el formulario no es válido
-      return;     
+      event.stopPropagation();
+      return;
     }
+
     try {
       const { data } = await loginUser({
         variables: {
-          username: userFormData.username, 
-          password: userFormData.password, 
+          username: userFormData.username,
+          password: userFormData.password,
         },
       });
 
       const token = data?.login?.token;
 
       if (token) {
-        AuthService.login(token); // Guardamos el token y redirigimos al home
-        navigate('/dashboard'); // Redirigir a la ruta /dashboard después de iniciar sesión
+        localStorage.setItem('token', token); // ✅ Guarda el token con clave "token"
+        navigate('/dashboard');
       } else {
         throw new Error('No token returned from server');
       }
 
-      setUserFormData({ username: '', password: '' }); // Limpiar el formulario
+      setUserFormData({ username: '', password: '' });
     } catch (err: any) {
-      console.error('Login error:', err); // Imprimir error en consola
-      setError('Response not successful: ' + err.message); // Mostrar mensaje legible
+      console.error('Login error:', err);
+      setError('Response not successful: ' + err.message);
     }
   };
 
@@ -90,14 +83,13 @@ const Login = () => {
           <h2>LOGIN TO YOUR ACCOUNT</h2>
 
           <form className="login-form" onSubmit={handleFormSubmit}>
-            <label>Username :</label> {/* Aunque input dice 'username', se espera un email */}
+            <label>Username :</label>
             <input
               type="text"
               placeholder="Enter your Username"
               name="username"
               onChange={handleInputChange}
               value={userFormData.username}
-              // onChange={(e) => setUsername(e.target.value)}
               required
             />
 
@@ -108,7 +100,6 @@ const Login = () => {
               name="password"
               onChange={handleInputChange}
               value={userFormData.password}
-              // onChange={(e) => setPassword(e.target.value)}
               required
             />
 
