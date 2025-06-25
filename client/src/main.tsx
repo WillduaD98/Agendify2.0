@@ -1,19 +1,21 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-// import { BrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 import App from './App';
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from '@apollo/client'; // 
-import { setContext } from '@apollo/client/link/context'; // Apollo Client
-import { AuthProvider } from './context/AuthContext'; // 👈 Importa el proveedor
+import { AuthProvider } from './context/AuthContext';
 
-// Apollo setup con httpLink y authLink
-// const httpLink = createHttpLink({ uri: '/graphql' });
-const httpLink = createHttpLink({ uri: 'http://localhost:3001/graphql' }); // para asegurar de que las peticiones vayan directo al servidor GraphQL en el puerto correcto.
+// 🔗 Enlace al servidor GraphQL (ajusta si estás desplegado en Render)
+const httpLink = createHttpLink({
+  uri: 'http://localhost:3001/graphql',
+});
+
+// 🔐 Contexto de autenticación: agrega token a cada petición
 const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('id_token'); // 🔄 CAMBIADO AQUÍ
   return {
     headers: {
       ...headers,
@@ -22,21 +24,22 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
-//  ApolloClient con authLink + cache
+
+// 🚀 Cliente Apollo con autenticación
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
 });
 
-//  Crear constante `router = createBrowserRouter(...)` y definir rutas.
-const router = createBrowserRouter([ // 
+// 🌐 Rutas de React Router
+const router = createBrowserRouter([
   {
     path: '*',
     element: <App />,
   },
 ]);
 
-// Envolviendo con ApolloProvider y RouterProvider
+// 🚀 Renderizar la app
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ApolloProvider client={client}>
