@@ -9,6 +9,7 @@ export interface AppointmentAttributes extends Document {
   date: Date;
   reason: string;
   status: 'pending' | 'confirmed' | 'cancelled';
+  time: string;
   clientId: Types.ObjectId;
   client?: ClientAttributes
 
@@ -29,6 +30,9 @@ const appointmentSchema = new Schema<AppointmentAttributes>(
       enum: ['pending', 'confirmed', 'cancelled'],
       default: 'pending',
     },
+    time: {
+      type: String,
+    },
 
     clientId: {
       type: Schema.Types.ObjectId,
@@ -42,6 +46,13 @@ const appointmentSchema = new Schema<AppointmentAttributes>(
     }
   }
 );
+
+appointmentSchema.virtual('client', {
+  ref: 'Client',
+  localField: 'clientId',
+  foreignField: '_id',
+  justOne:true
+})
 const Appointment = model<AppointmentAttributes>('Appointment', appointmentSchema);
 
 export default Appointment;

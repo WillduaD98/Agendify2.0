@@ -110,15 +110,32 @@ export const resolvers = {
         throw new Error('Failed to retrieve client.');
       }
     },
-    appointments: async (_: any, __: any, context: Context) => {
-      try {
-        if (!context.user) throw AuthenticationError;
-        const clients = await Client.find({ assignedUserId: context.user._id });
-        const clientIds = clients.map(c => c._id);
-        return await Appointment.find({ clientId: { $in: clientIds } }).populate('client');
-      } catch (error) {
-        throw new Error('Failed to retrieve appointments.');
+    appointments: async (_: any, args: { date?: string }, context: Context) => {
+      if (!context.user) throw new AuthenticationError('Unauthorized');
+    
+      const filter: any = {
+        // Esto permite filtrar por usuario
+        // usando populate para acceder al assignedUserId del cliente
+      };
+    
+      if (args.date) {
+        const start = new Date(args.date);
+        const end = new Date(start);
+        end.setHours(23, 59, 59, 999);
+        filter.date = { $gte: start, $lte: end };
       }
+    
+      const appointments = await Appointment.find(filter)
+        .populate({
+          path: 'clientId',
+          match: { assignedUserId: context.user._id }
+        });
+    
+      // Mapeamos para que el campo sea "client"
+      return appointments.map(a => ({
+        ...a.toObject(),
+        client: a.clientId
+      }));
     },
     appointment: async (_: any, args: { appointmentId: string }, context: Context) => {
       try {
@@ -207,18 +224,32 @@ export const resolvers = {
       }
     },
     addAppointment: async (_: any, { input }: AddAppointment, context: Context) => {
-      try {
-        if (!context.user) throw AuthenticationError;
-        const client = await Client.findOne({ _id: input.clientId, assignedUserId: context.user._id });
-        if (!client) throw new Error('Client not found or not authorized.');
-        const newAppointment = await Appointment.create(input);
-        const clientData = await Client.findById(input.clientId).populate('assignedUserId');
-        const userData = await User.findById(context.user._id);
-        return { ...newAppointment.toObject(), client: clientData, user: userData };
-      } catch (error) {
-        throw new Error('Error creating appointment.');
+      if (!context.user) throw new AuthenticationError('Unauthorized');
+    
+      const client = await Client.findOne({
+        _id: input.clientId,
+        assignedUserId: context.user._id,
+      });
+    
+      if (!client) {
+        throw new Error('Client not found or not authorized');
       }
+    
+      const parsedInput = {
+        ...input,
+        date: isNaN(Date.parse(input.date)) ? new Date(parseInt(input.date)) : new Date(input.date),
+      };
+    
+      const newAppointment = await Appointment.create(parsedInput);
+      await newAppointment.populate('clientId');
+      console.log('🧪 Fecha guardada:', newAppointment.date);
+
+      return {
+        ...newAppointment.toObject(),
+        client: newAppointment.clientId,
+      };
     },
+    
     updateAppointment: async (_: any, { _id, input }: UpdateAppointment, context: Context) => {
       try {
         if (!context.user) throw AuthenticationError;

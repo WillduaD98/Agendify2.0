@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { useQuery } from "@apollo/client";
-import { GET_APPOINTMENTS_BY_FILTER } from "../services/queries";
+import { GET_APPOINTMENTS_BY_DATE } from "../services/queries.js";
 
 const PublicBooking = () => {
   const [selectedDate, setSelectedDate] = useState("");
 
-  const { data, loading, error } = useQuery(GET_APPOINTMENTS_BY_FILTER, {
+  const { data, loading, error } = useQuery(GET_APPOINTMENTS_BY_DATE, {
     variables: { date: selectedDate, time: "", clientName: "" },
     skip: !selectedDate, // Solo ejecuta la query si hay fecha seleccionada
   });

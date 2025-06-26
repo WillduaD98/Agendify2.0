@@ -1,9 +1,9 @@
 import { gql } from "@apollo/client";
 
-export const GET_APPOINTMENTS_BY_FILTER = gql`
-  query AppointmentsByFilter($date: String, $time: String, $clientName: String) {
-    appointmentsByFilter(date: $date, time: $time, clientName: $clientName) {
-      id
+export const GET_APPOINTMENTS_BY_DATE = gql`
+  query appointments($date: String) {
+    appointments(date: $date) {
+      _id
       date
       time
       reason

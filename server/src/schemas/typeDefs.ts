@@ -24,8 +24,9 @@ export const typeDefs = `
         _id: ID!
         date: String
         reason: String!
+        time: String
         status: String
-        clientId: ID
+        
         client: Client
     }
 
@@ -71,7 +72,7 @@ export const typeDefs = `
         me: User
         clients: [Client]!
         client(clientId: ID!, name: String): Client
-        appointments: [Appointment]!
+        appointments(date: String): [Appointment]!
         appointment(_id: ID!): Appointment
     }
 
