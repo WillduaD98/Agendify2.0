@@ -18,14 +18,14 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  introspection: true, // 🔓 necesario para Apollo Studio en producción
+  introspection: true,
   formatError: (formattedError: GraphQLFormattedError) => {
     return {
       message: formattedError.message,
       path: formattedError.path || [],
-      code: (formattedError.extensions as any)?.code || 'INTERNAL_SERVER_ERROR'
+      code: (formattedError.extensions as any)?.code || 'INTERNAL_SERVER_ERROR',
     };
-  }
+  },
 });
 
 const __filename = fileURLToPath(import.meta.url);
@@ -38,8 +38,22 @@ const startApolloServer = async () => {
   const app = express();
   const PORT = process.env.PORT || 3001;
 
-  // ✅ CORS abierto para Apollo Studio u otros clientes externos
-  app.use(cors());
+  // ✅ CORS para frontend local y desplegado en Render
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'https://agendify2-0-1.onrender.com',
+  ];
+
+  app.use(cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  }));
 
   app.use(express.json());
   app.use((req, _res, next) => {
@@ -47,10 +61,9 @@ const startApolloServer = async () => {
     next();
   });
 
-  // 📡 Middleware de Apollo
   app.use('/graphql', expressMiddleware(server, { context: authenticateToken }));
 
-  // ⚙️ Servir archivos en producción (solo si haces deploy del frontend en el mismo repo)
+  // 🌐 Solo aplica si también sirvieras frontend desde este servidor
   if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, '../../client/dist')));
     app.get('*', (_req: Request, res: Response) => {
