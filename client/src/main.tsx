@@ -15,7 +15,7 @@ const httpLink = createHttpLink({
 
 // 🔐 Contexto de autenticación: agrega token a cada petición
 const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem('id_token'); // 🔄 CAMBIADO AQUÍ
+  const token = localStorage.getItem('token'); // 🔄 CAMBIADO AQUÍ
   return {
     headers: {
       ...headers,
