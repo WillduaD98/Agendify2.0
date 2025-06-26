@@ -5,7 +5,7 @@ import './ScheduleAppointment.css';
 interface AppointmentFormProps {
   selectedDate: string;
   setSelectedDate: (date: string) => void;
-  onSuccess: (date: string) => Promise<void>;
+  onSuccess: () => Promise<void>;
 }
 
 const GET_CLIENTS = gql`
@@ -25,7 +25,7 @@ const ADD_APPOINTMENT = gql`
   }
 `;
 
-const AppointmentForm: React.FC<AppointmentFormProps> = ({ onSuccess, setSelectedDate, selectedDate }) => {
+const AppointmentCard: React.FC<AppointmentFormProps> = ({ onSuccess, setSelectedDate, selectedDate }) => {
   const [reason, setReason] = useState('');
   const [status, setStatus] = useState('');
   const [clientId, setClientId] = useState('');
@@ -55,7 +55,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ onSuccess, setSelecte
       setReason('');
       setStatus('');
 
-      await onSuccess(selectedDate);
+      await onSuccess();
     } catch (error: any) {
       console.error('Error creating appointment:', error);
       setErrorMessage('Error creating appointment');
@@ -124,4 +124,4 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ onSuccess, setSelecte
   );
 };
 
-export default AppointmentForm;
+export default AppointmentCard;
