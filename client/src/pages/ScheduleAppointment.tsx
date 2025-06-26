@@ -5,7 +5,7 @@ import AppointmentList from '../components/AppointmentList';
 import { GET_APPOINTMENTS_BY_FILTER } from "../services/queries";
 
 interface Appointment {
-  id: number;
+  _id?: string;
   date: string;
   reason: string;
   status: string;
