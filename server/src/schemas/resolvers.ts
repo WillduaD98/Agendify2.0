@@ -64,54 +64,80 @@ export interface Context {
 export const resolvers = {
   Query: {
     users: async (): Promise<UserAttributes[]> => {
-      return await User.find();
+      try {
+        return await User.find();
+      } catch (error) {
+        throw new Error('Failed to retrieve users.');
+      }
     },
     user: async (_: any, args: GetUserArgs, context: Context) => {
-      const query: any = { $or: [] };
-      if (args.userId) query.$or.push({ _id: args.userId });
-      if (args.username) query.$or.push({ username: args.username });
-      if (context.user) query.$or.push({ _id: context.user._id });
-      if (query.$or.length === 0) throw new Error('No criteria provided to find user.');
-      return await User.findOne(query);
+      try {
+        const query: any = { $or: [] };
+        if (args.userId) query.$or.push({ _id: args.userId });
+        if (args.username) query.$or.push({ username: args.username });
+        if (context.user) query.$or.push({ _id: context.user._id });
+        if (query.$or.length === 0) throw new Error('No criteria provided to find user.');
+        return await User.findOne(query);
+      } catch (error) {
+        throw new Error('Error retrieving user.');
+      }
     },
     me: async (_: any, __: any, context: Context) => {
-      if (!context.user) throw AuthenticationError;
-      return await User.findById(context.user._id);
+      try {
+        if (!context.user) throw AuthenticationError;
+        return await User.findById(context.user._id);
+      } catch (error) {
+        throw error;
+      }
     },
     clients: async (_: any, __: any, context: Context) => {
-      if (!context.user) throw AuthenticationError;
-      return await Client.find({ assignedUserId: context.user._id }).populate('assignedUserId');
+      try {
+        if (!context.user) throw AuthenticationError;
+        return await Client.find({ assignedUserId: context.user._id }).populate('assignedUserId');
+      } catch (error) {
+        throw new Error('Failed to retrieve clients.');
+      }
     },
     client: async (_: any, args: GetClientArgs, context: Context) => {
-      if (!context.user) throw AuthenticationError;
-      const filters: any = { assignedUserId: context.user._id };
-      if (args.clientId) filters._id = args.clientId;
-      if (args.name) filters.name = args.name;
-      return await Client.findOne(filters).populate('assignedUserId');
+      try {
+        if (!context.user) throw AuthenticationError;
+        const filters: any = { assignedUserId: context.user._id };
+        if (args.clientId) filters._id = args.clientId;
+        if (args.name) filters.name = args.name;
+        return await Client.findOne(filters).populate('assignedUserId');
+      } catch (error) {
+        throw new Error('Failed to retrieve client.');
+      }
     },
     appointments: async (_: any, __: any, context: Context) => {
-      if (!context.user) throw AuthenticationError;
-      const clients = await Client.find({ assignedUserId: context.user._id });
-      const clientIds = clients.map(c => c._id);
-      return await Appointment.find({ clientId: { $in: clientIds } }).populate('client');
+      try {
+        if (!context.user) throw AuthenticationError;
+        const clients = await Client.find({ assignedUserId: context.user._id });
+        const clientIds = clients.map(c => c._id);
+        return await Appointment.find({ clientId: { $in: clientIds } }).populate('client');
+      } catch (error) {
+        throw new Error('Failed to retrieve appointments.');
+      }
     },
     appointment: async (_: any, args: { appointmentId: string }, context: Context) => {
-      if (!context.user) throw AuthenticationError;
-      const appointment = await Appointment.findById(args.appointmentId).populate({
-        path: 'clientId',
-        populate: { path: 'assignedUserId' }
-      });
-      if (
-        appointment &&
-        appointment.clientId &&
-        (appointment.clientId as any).assignedUserId.toString() === context.user._id.toString()
-      ) {
-        return appointment;
+      try {
+        if (!context.user) throw AuthenticationError;
+        const appointment = await Appointment.findById(args.appointmentId).populate({
+          path: 'clientId',
+          populate: { path: 'assignedUserId' }
+        });
+        if (
+          appointment &&
+          appointment.clientId &&
+          (appointment.clientId as any).assignedUserId.toString() === context.user._id.toString()
+        ) {
+          return appointment;
+        }
+        return null;
+      } catch (error) {
+        throw new Error('Failed to retrieve appointment.');
       }
-      return null;
     },
-
-    // ✅ Resolver público por filtros
     appointmentsByFilter: async (
       _: any,
       args: { date?: string; time?: string; clientName?: string }
@@ -119,22 +145,19 @@ export const resolvers = {
       try {
         const filters: any = {};
         if (args.date) filters.date = args.date;
-
         if (args.clientName) {
           const clientMatches = await Client.find({
             name: { $regex: args.clientName, $options: 'i' }
           });
-
           const clientIds = clientMatches.map(c => c._id);
           filters.clientId = { $in: clientIds };
         }
-
         return await Appointment.find(filters).populate({ path: 'clientId', model: 'Client' }).then(appointments =>
-  appointments.map(appt => ({
-    ...appt.toObject(),
-    client: appt.clientId // re-map clientId → client
-  }))
-);
+          appointments.map(appt => ({
+            ...appt.toObject(),
+            client: appt.clientId
+          }))
+        );
       } catch (error) {
         console.error('Error in appointmentsByFilter:', error);
         throw new Error('Failed to fetch filtered appointments.');
@@ -144,61 +167,101 @@ export const resolvers = {
 
   Mutation: {
     addUser: async (_: any, { input }: AddUser) => {
-      const user = await User.create({ ...input });
-      const token = signToken(user.username, user._id);
-      return { token, user };
+      try {
+        const user = await User.create({ ...input });
+        const token = signToken(user.username, user._id);
+        return { token, user };
+      } catch (error) {
+        throw new Error('Error creating user.');
+      }
     },
     login: async (_: any, { username, password }: { username: string; password: string }) => {
-      const user = await User.findOne({ username });
-      if (!user) throw new AuthenticationError('No user found with that username');
-      const correctPw = await user.isCorrectPassword(password);
-      if (!correctPw) throw new AuthenticationError('Incorrect credentials');
-      const token = signToken(user.username, user._id);
-      return { token, user };
+      console.log('🔍 Login resolver called');
+      try {
+        console.log('🧪 Login attempt for:', username);
+        const user = await User.findOne({ username });
+        if (!user) {
+          throw new AuthenticationError('No user found with that username');
+        }
+        const correctPw = await user.isCorrectPassword(password);
+        if (!correctPw) {
+          throw new AuthenticationError('Incorrect credentials');
+        }
+        const token = signToken(user.username, user._id);
+        console.log('✅ Login successful, token generated:', token);
+        return { token, user };
+      } catch (error) {
+        console.error('❌ Error in login resolver:', error);
+        throw error;
+      }
     },
     addClient: async (_: any, { input }: { input: AddClient['input'] }, context: Context) => {
-      if (!context.user) throw AuthenticationError;
-      const newClient = await Client.create({ ...input, assignedUserId: context.user._id });
-      return await Client.findById(newClient._id).populate('assignedUserId');
+      try {
+        if (!context.user) throw AuthenticationError;
+        const newClient = await Client.create({ ...input, assignedUserId: context.user._id });
+        return await Client.findById(newClient._id).populate('assignedUserId');
+      } catch (error) {
+        throw new Error('Error creating client.');
+      }
     },
     updateClient: async (_: any, { _id, input }: UpdateClient, context: Context) => {
-      if (!context.user) throw AuthenticationError;
-      const client = await Client.findByIdAndUpdate(_id, { $set: input }, { new: true }).populate('assignedUserId');
-      if (!client) throw new Error('Client not found.');
-      return client;
+      try {
+        if (!context.user) throw AuthenticationError;
+        const client = await Client.findByIdAndUpdate(_id, { $set: input }, { new: true }).populate('assignedUserId');
+        if (!client) throw new Error('Client not found.');
+        return client;
+      } catch (error) {
+        throw new Error('Error updating client.');
+      }
     },
     removeClient: async (_: any, { _id }: RemoveClient, context: Context) => {
-      if (!context.user) throw AuthenticationError;
-      const client = await Client.findByIdAndDelete({ _id, assignedUserId: context.user._id }).populate('assignedUserId');
-      if (!client) throw new Error('Client not found.');
-      return client;
+      try {
+        if (!context.user) throw AuthenticationError;
+        const client = await Client.findByIdAndDelete({ _id, assignedUserId: context.user._id }).populate('assignedUserId');
+        if (!client) throw new Error('Client not found.');
+        return client;
+      } catch (error) {
+        throw new Error('Error removing client.');
+      }
     },
     addAppointment: async (_: any, { input }: AddAppointment, context: Context) => {
-      if (!context.user) throw AuthenticationError;
-      const client = await Client.findOne({ _id: input.clientId, assignedUserId: context.user._id });
-      if (!client) throw new Error('Client not found or not authorized.');
-      const newAppointment = await Appointment.create(input);
-      const clientData = await Client.findById(input.clientId).populate('assignedUserId');
-      const userData = await User.findById(context.user._id);
-      return { ...newAppointment.toObject(), client: clientData, user: userData };
-    },
-    updateAppointment: async (_: any, { _id, input }: UpdateAppointment, context: Context) => {
-      if (!context.user) throw AuthenticationError;
-      if (input.clientId) {
+      try {
+        if (!context.user) throw AuthenticationError;
         const client = await Client.findOne({ _id: input.clientId, assignedUserId: context.user._id });
         if (!client) throw new Error('Client not found or not authorized.');
+        const newAppointment = await Appointment.create(input);
+        const clientData = await Client.findById(input.clientId).populate('assignedUserId');
+        const userData = await User.findById(context.user._id);
+        return { ...newAppointment.toObject(), client: clientData, user: userData };
+      } catch (error) {
+        throw new Error('Error creating appointment.');
       }
-      const appointment = await Appointment.findOneAndUpdate({ _id }, { $set: input }, { new: true }).populate('clientId');
-      if (!appointment) throw new Error('Appointment not found.');
-      const clientId = input.clientId || appointment.clientId;
-      const clientData = await Client.findById(clientId).populate('assignedUserId');
-      return { ...appointment.toObject(), client: clientData };
+    },
+    updateAppointment: async (_: any, { _id, input }: UpdateAppointment, context: Context) => {
+      try {
+        if (!context.user) throw AuthenticationError;
+        if (input.clientId) {
+          const client = await Client.findOne({ _id: input.clientId, assignedUserId: context.user._id });
+          if (!client) throw new Error('Client not found or not authorized.');
+        }
+        const appointment = await Appointment.findOneAndUpdate({ _id }, { $set: input }, { new: true }).populate('clientId');
+        if (!appointment) throw new Error('Appointment not found.');
+        const clientId = input.clientId || appointment.clientId;
+        const clientData = await Client.findById(clientId).populate('assignedUserId');
+        return { ...appointment.toObject(), client: clientData };
+      } catch (error) {
+        throw new Error('Error updating appointment.');
+      }
     },
     removeAppointment: async (_: any, { _id }: RemoveAppointment, context: Context) => {
-      if (!context.user) throw AuthenticationError;
-      const appointment = await Appointment.findOneAndDelete({ _id }).populate('clientId');
-      if (!appointment) throw new Error('Appointment not found.');
-      return appointment;
+      try {
+        if (!context.user) throw AuthenticationError;
+        const appointment = await Appointment.findOneAndDelete({ _id }).populate('clientId');
+        if (!appointment) throw new Error('Appointment not found.');
+        return appointment;
+      } catch (error) {
+        throw new Error('Error removing appointment.');
+      }
     }
   }
 };
