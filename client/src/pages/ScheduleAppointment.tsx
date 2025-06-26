@@ -19,11 +19,11 @@ const ViewCreateAppointments = () => {
   const [selectedDate, setSelectedDate] = useState('');
   const [appointments, setAppointments] = useState<Appointment[]>([]);
 
-  const [getAppointments, { data, error }] = useLazyQuery(GET_APPOINTMENTS_BY_FILTER);
+  const [getAppointments, { data }] = useLazyQuery(GET_APPOINTMENTS_BY_FILTER);
 
   // Establecer la fecha actual al cargar
   useEffect(() => {
-    const today = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
+    const today = new Date().toISOString().split('T')[0];
     setSelectedDate(today);
   }, []);
 
@@ -46,7 +46,9 @@ const ViewCreateAppointments = () => {
       <AppointmentCard
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
-        onSuccess={() => getAppointments({ variables: { date: selectedDate } })}
+        onSuccess={async () => {
+          await getAppointments({ variables: { date: selectedDate } });
+        }}
       />
       <AppointmentList appointments={appointments} />
     </div>
