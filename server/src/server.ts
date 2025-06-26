@@ -1,6 +1,10 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import path from 'path';
 import cors from 'cors';
+import { fileURLToPath } from 'url';
+import { Request, Response } from 'express';
+
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { typeDefs, resolvers } from './schemas/index.js';
@@ -14,7 +18,7 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  introspection: true,
+  introspection: true, // 🔓 necesario para Apollo Studio en producción
   formatError: (formattedError: GraphQLFormattedError) => {
     return {
       message: formattedError.message,
@@ -24,6 +28,9 @@ const server = new ApolloServer({
   }
 });
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const startApolloServer = async () => {
   await server.start();
   await db();
@@ -31,22 +38,25 @@ const startApolloServer = async () => {
   const app = express();
   const PORT = process.env.PORT || 3001;
 
-  // Habilitar CORS para permitir acceso desde tu frontend en Render
-  app.use(cors({
-    origin: 'https://agendify2-0-1.onrender.com', // ✅ Reemplaza con tu frontend URL real
-    credentials: true,
-  }));
+  // ✅ CORS abierto para Apollo Studio u otros clientes externos
+  app.use(cors());
 
   app.use(express.json());
-
   app.use((req, _res, next) => {
     console.log(`[${req.method}] ${req.path}`);
     next();
   });
 
+  // 📡 Middleware de Apollo
   app.use('/graphql', expressMiddleware(server, { context: authenticateToken }));
 
-  // ❌ Ya no servimos frontend desde aquí
+  // ⚙️ Servir archivos en producción (solo si haces deploy del frontend en el mismo repo)
+  if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../../client/dist')));
+    app.get('*', (_req: Request, res: Response) => {
+      res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
+    });
+  }
 
   app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
