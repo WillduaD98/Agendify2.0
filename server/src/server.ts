@@ -1,10 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import path from 'path';
 import cors from 'cors';
-import { fileURLToPath } from 'url';
-import { Request, Response } from 'express';
-
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { typeDefs, resolvers } from './schemas/index.js';
@@ -28,9 +24,6 @@ const server = new ApolloServer({
   }
 });
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 const startApolloServer = async () => {
   await server.start();
   await db();
@@ -38,31 +31,22 @@ const startApolloServer = async () => {
   const app = express();
   const PORT = process.env.PORT || 3001;
 
-  // ✅ CORS para desarrollo y producción
+  // Habilitar CORS para permitir acceso desde tu frontend en Render
   app.use(cors({
-    origin: [
-      'http://localhost:3000',
-      'https://agendify2-0-qqvt.onrender.com'
-    ],
-    credentials: true
+    origin: 'https://agendify2-0-1.onrender.com', // ✅ Reemplaza con tu frontend URL real
+    credentials: true,
   }));
 
   app.use(express.json());
+
   app.use((req, _res, next) => {
     console.log(`[${req.method}] ${req.path}`);
     next();
   });
 
-  // Apollo middleware con autenticación
   app.use('/graphql', expressMiddleware(server, { context: authenticateToken }));
 
-  // Servir frontend en producción
-  if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '../../client/dist')));
-    app.get('*', (_req: Request, res: Response) => {
-      res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
-    });
-  }
+  // ❌ Ya no servimos frontend desde aquí
 
   app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
