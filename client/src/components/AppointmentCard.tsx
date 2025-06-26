@@ -70,7 +70,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ onSuccess, setSelecte
         <label>
           Date:
           <input
-            type="datetime-local"
+            type="date"
             name="date"
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}

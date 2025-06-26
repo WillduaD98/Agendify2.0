@@ -39,7 +39,7 @@ const Navbar: React.FC = () => {
           <Link to="/dashboard">Home</Link>
         )}
         <Link to="/schedule">New Appointment</Link>
-        <Link to="/booking">View Appointments</Link>
+        <Link to="/booking">View Schedule</Link>
         <button
           type="button"
           className="link-button"

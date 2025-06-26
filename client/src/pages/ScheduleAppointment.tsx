@@ -1,9 +1,8 @@
-import _React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLazyQuery } from '@apollo/client';
 import AppointmentCard from '../components/AppointmentCard';
 import AppointmentList from '../components/AppointmentList';
-// import './ScheduleAppointment.css';
-import api from '../services/api';
-
+import { GET_APPOINTMENTS_BY_FILTER } from "../services/queries";
 
 interface Appointment {
   id: number;
@@ -20,36 +19,36 @@ const ViewCreateAppointments = () => {
   const [selectedDate, setSelectedDate] = useState('');
   const [appointments, setAppointments] = useState<Appointment[]>([]);
 
-  const fetchAppointments = async (date: string) => {
-    try {
-      const res = await api.get('/appointments', {
-        params: { date }
-      });
-      setAppointments(res.data);
-    } catch (error) {
-      console.error('Error fetching appointments:', error);
-    }
-  };
+  const [getAppointments, { data, error }] = useLazyQuery(GET_APPOINTMENTS_BY_FILTER);
+
+  // Establecer la fecha actual al cargar
   useEffect(() => {
-    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-    setSelectedDate(today); // esto dispara el useEffect de selectedDate
+    const today = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
+    setSelectedDate(today);
   }, []);
 
+  // Ejecutar la query cuando cambia la fecha
   useEffect(() => {
     if (selectedDate) {
-      fetchAppointments(selectedDate);
+      getAppointments({ variables: { date: selectedDate } });
     }
   }, [selectedDate]);
 
+  // Actualizar la lista cuando llegan los datos
+  useEffect(() => {
+    if (data?.appointmentsByFilter) {
+      setAppointments(data.appointmentsByFilter);
+    }
+  }, [data]);
+
   return (
-    <div style= {{ background: 'linear-gradient(to right, #e0f7fa, #ffffff)'}}>
-      <h1 className="text-2xl font-bold mb-4"></h1>
+    <div style={{ background: 'linear-gradient(to right, #e0f7fa, #ffffff)' }}>
       <AppointmentCard
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
-        onSuccess={fetchAppointments}
+        onSuccess={() => getAppointments({ variables: { date: selectedDate } })}
       />
-      {/* <AppointmentList appointments={appointments} /> */}
+      <AppointmentList appointments={appointments} />
     </div>
   );
 };

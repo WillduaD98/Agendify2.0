@@ -14,8 +14,8 @@ const Dashboard: React.FC = () => {
           Easily schedule, organize, and track your appointments with just a few clicks.
         </p>
         <div className="dashboard-buttons">
-          <button onClick={() => navigate('/schedule')}>📅 View Schedule</button>
-          <button onClick={() => navigate('/booking')}>➕ Book New Appointment</button>
+          <button onClick={() => navigate('/schedule')}>➕ Book New Appointment</button>
+          <button onClick={() => navigate('/booking')}>📅 View Schedule</button>
           <button onClick={() => navigate('/clients')}>👥 View/Create Clients</button>
         </div>
       </div>
