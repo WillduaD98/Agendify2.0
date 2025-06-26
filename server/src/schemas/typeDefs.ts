@@ -5,7 +5,7 @@ export const typeDefs = `
         clients: [Client]!
     }
 
-    type Auth{
+    type Auth {
         token: ID!
         user: User
     }
@@ -38,17 +38,15 @@ export const typeDefs = `
         username: String!
         password: String!
     }
-    
+
     input ClientInput {
         name: String!
         phoneNumber: String!
-        
     }
 
     input UpdateClientInput {
         name: String
         phoneNumber: String
-        
     }
 
     input CreateAppointmentInput {
@@ -57,7 +55,7 @@ export const typeDefs = `
         status: String
         clientId: ID
     }
-    
+
     input UpdateAppointmentInput {
         date: String
         reason: String
@@ -65,7 +63,7 @@ export const typeDefs = `
         clientId: ID
     }
 
-    type Query { 
+    type Query {
         users: [User]!
         user(userId: ID!, username: String): User
         me: User
@@ -73,12 +71,13 @@ export const typeDefs = `
         client(clientId: ID!, name: String): Client
         appointments: [Appointment]!
         appointment(_id: ID!): Appointment
+        appointmentsByFilter(date: String, time: String, clientName: String): [Appointment]!
     }
 
-    type Mutation{
+    type Mutation {
         addUser(input: CreateUserInput!): Auth
         login(username: String!, password: String!): Auth
-        addClient(input : ClientInput!): Client
+        addClient(input: ClientInput!): Client
         updateClient(_id: ID!, input: ClientInput!): Client
         removeClient(_id: ID!): Client
         addAppointment(input: CreateAppointmentInput!): Appointment

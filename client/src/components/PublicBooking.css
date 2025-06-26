@@ -1,0 +1,40 @@
+/* src/pages/PublicBooking.css */
+
+.appointment-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  padding-left: 3rem; /* ✅ Mueve los cuadritos hacia la derecha */
+}
+
+.appointment-card {
+  background: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+  max-width: 700px;
+  width: 100%;
+}
+
+.appointment-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.client-icon {
+  font-size: 24px;
+  margin-right: 10px;
+}
+
+.detail-text {
+  color: #374151; /* text-gray-700 */
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.detail-label {
+  font-weight: 600;
+}

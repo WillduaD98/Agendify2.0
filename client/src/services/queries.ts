@@ -1,11 +1,10 @@
 import { gql } from "@apollo/client";
 
 export const GET_APPOINTMENTS_BY_FILTER = gql`
-  query AppointmentsByFilter($date: String, $time: String, $clientName: String) {
-    appointmentsByFilter(date: $date, time: $time, clientName: $clientName) {
-      id
+  query AppointmentsByFilter($date: String) {
+    appointmentsByFilter(date: $date) {
+      _id
       date
-      time
       reason
       status
       client {

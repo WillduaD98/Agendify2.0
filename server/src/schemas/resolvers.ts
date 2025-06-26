@@ -4,14 +4,13 @@ import Client from '../models/client.model.js';
 import User, { UserAttributes } from '../models/user.model.js';
 import { signToken, AuthenticationError } from '../services/auth.js';
 
-// (Resto del código sigue igual sin cambios)
+// INTERFACES
 export interface AddUser {
   input: {
     username: string;
     password: string;
   };
 }
-// ... (el resto de tus interfaces y resolvers va igual que antes con el try/catch)
 
 export interface GetUserArgs {
   userId?: string;
@@ -138,6 +137,31 @@ export const resolvers = {
       } catch (error) {
         throw new Error('Failed to retrieve appointment.');
       }
+    },
+    appointmentsByFilter: async (
+      _: any,
+      args: { date?: string; time?: string; clientName?: string }
+    ) => {
+      try {
+        const filters: any = {};
+        if (args.date) filters.date = args.date;
+        if (args.clientName) {
+          const clientMatches = await Client.find({
+            name: { $regex: args.clientName, $options: 'i' }
+          });
+          const clientIds = clientMatches.map(c => c._id);
+          filters.clientId = { $in: clientIds };
+        }
+        return await Appointment.find(filters).populate({ path: 'clientId', model: 'Client' }).then(appointments =>
+          appointments.map(appt => ({
+            ...appt.toObject(),
+            client: appt.clientId
+          }))
+        );
+      } catch (error) {
+        console.error('Error in appointmentsByFilter:', error);
+        throw new Error('Failed to fetch filtered appointments.');
+      }
     }
   },
 
@@ -152,28 +176,22 @@ export const resolvers = {
       }
     },
     login: async (_: any, { username, password }: { username: string; password: string }) => {
-      console.log('🔍 Login resolver called'); // <- Asegúrate de que esto se imprima en la terminal
+      console.log('🔍 Login resolver called');
       try {
-        console.log('🧪 Login attempt for:', username); // <- Esto debería verse en terminal
-    
+        console.log('🧪 Login attempt for:', username);
         const user = await User.findOne({ username });
-    
         if (!user) {
           throw new AuthenticationError('No user found with that username');
         }
-    
         const correctPw = await user.isCorrectPassword(password);
-    
         if (!correctPw) {
           throw new AuthenticationError('Incorrect credentials');
         }
-    
         const token = signToken(user.username, user._id);
-    console.log ('✅ Login successful, token generated:', token); 
-
+        console.log('✅ Login successful, token generated:', token);
         return { token, user };
       } catch (error) {
-        console.error('❌ Error in login resolver:', error); // <- Asegúrate de tener esto
+        console.error('❌ Error in login resolver:', error);
         throw error;
       }
     },
