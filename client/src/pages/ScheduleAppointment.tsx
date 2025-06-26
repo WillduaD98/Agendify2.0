@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useLazyQuery } from '@apollo/client';
 import AppointmentCard from '../components/AppointmentCard';
 import AppointmentList from '../components/AppointmentList';
