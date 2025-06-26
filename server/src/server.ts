@@ -23,9 +23,9 @@ const server = new ApolloServer({
     return {
       message: formattedError.message,
       path: formattedError.path || [],
-      code: (formattedError.extensions as any)?.code || 'INTERNAL_SERVER_ERROR',
+      code: (formattedError.extensions as any)?.code || 'INTERNAL_SERVER_ERROR'
     };
-  },
+  }
 });
 
 const __filename = fileURLToPath(import.meta.url);
@@ -38,20 +38,9 @@ const startApolloServer = async () => {
   const app = express();
   const PORT = process.env.PORT || 3001;
 
-  // ✅ CORS para frontend local y desplegado en Render
-  const allowedOrigins = [
-    'http://localhost:3000',
-    'https://agendify2-0-1.onrender.com',
-  ];
-
+  // ✅ CORS configurado para permitir el frontend en producción
   app.use(cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
+    origin: 'https://agendify2-0-1.onrender.com',
     credentials: true,
   }));
 
@@ -61,9 +50,10 @@ const startApolloServer = async () => {
     next();
   });
 
+  // 📡 Middleware de Apollo
   app.use('/graphql', expressMiddleware(server, { context: authenticateToken }));
 
-  // 🌐 Solo aplica si también sirvieras frontend desde este servidor
+  // ⚙️ Servir archivos solo si el frontend está en este mismo repo
   if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, '../../client/dist')));
     app.get('*', (_req: Request, res: Response) => {
