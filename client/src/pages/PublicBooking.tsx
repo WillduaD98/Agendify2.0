@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useQuery } from "@apollo/client";
 import { GET_APPOINTMENTS_BY_FILTER } from "../services/queries";
-import "../components/publicbooking.css";
+import "../components/PublicBooking.css";
 
 const PublicBooking = () => {
   const [selectedDate, setSelectedDate] = useState("");
