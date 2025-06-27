@@ -17,7 +17,10 @@ interface Props {
 }
 
 function formatDate(dateString: string) {
-  const date = new Date(dateString);
+  const date = new Date(parseInt(dateString));
+  console.log('now', Date.now());
+  console.log('dateString',dateString);
+  
   return new Intl.DateTimeFormat('es-MX', {
     day: '2-digit',
     month: 'long',

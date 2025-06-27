@@ -4,6 +4,8 @@ import { useMutation } from '@apollo/client';
 import { LOGIN_USER } from '../services/mutations';
 import { useNavigate } from 'react-router-dom';
 
+import logo from '../assets/logoagendify.png';
+
 const Login = () => {
   const [userFormData, setUserFormData] = useState({
     username: '',
@@ -76,7 +78,7 @@ const Login = () => {
       <div className="login-right">
         <div className="login-box">
           <div className="login-logo">
-            <img src="assets/logoagendify.png" alt="Agendify Logo" />
+            <img src={logo} alt="Agendify Logo" />
             <h1>Agendify<span>+</span></h1>
           </div>
 

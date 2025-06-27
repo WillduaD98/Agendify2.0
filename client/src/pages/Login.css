@@ -34,7 +34,7 @@ body {
 
   .login-left {
     flex: 1;
-    background: url('/assets/office.jpg') no-repeat center center/cover;
+    background: url('../assets/office.jpg') no-repeat center center/cover;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
