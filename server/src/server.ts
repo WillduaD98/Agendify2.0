@@ -1,7 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
-import cors from 'cors';
+// import cors from 'cors';
 import { fileURLToPath } from 'url';
 import { Request, Response } from 'express';
 
@@ -13,7 +13,7 @@ import db from './config/db.js';
 import type { GraphQLFormattedError } from 'graphql';
 
 dotenv.config();
-process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+// process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 const server = new ApolloServer({
   typeDefs,
@@ -39,10 +39,10 @@ const startApolloServer = async () => {
   const PORT = process.env.PORT || 3001;
 
   // ✅ CORS configurado para permitir el frontend en producción
-  app.use(cors({
-    origin: 'https://agendify2-0-1.onrender.com',
-    credentials: true,
-  }));
+  // app.use(cors({
+  //   origin: 'https://agendify2-0-1.onrender.com',
+  //   credentials: true,
+  // }));
 
   app.use(express.json());
   app.use((req, _res, next) => {

@@ -10,7 +10,8 @@ import { AuthProvider } from './context/AuthContext';
 
 // 🔗 Enlace al servidor GraphQL (ajusta si estás desplegado en Render)
 const httpLink = createHttpLink({
-  uri: 'https://agendify-backend.onrender.com/graphql', // ✅ AJUSTA con tu URL real
+  uri: '/graphql', 
+  //  uri: 'https://agendify-backend.onrender.com/graphql', // ✅ AJUSTA con tu URL real
 });
 
 // 🔐 Contexto de autenticación: agrega token a cada petición
