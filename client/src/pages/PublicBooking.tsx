@@ -38,8 +38,8 @@ const PublicBooking = () => {
             <p className="text-gray-500">There are no appointments for the selected date.</p>
           )
         ) : (
-          appointments.map((appt: any) => (
-            <div key={appt.id} className="appointment-card">
+          appointments.map((appt: any,i:number) => (
+            <div key={i} className="appointment-card">
               <div className="appointment-header">
                 <div className="client-icon">👤</div>
                 <p className="text-lg font-semibold text-gray-800">
